@@ -33,8 +33,8 @@
             <select name="role" class="form-control" required>
                 <option value="">-- Pilih Role --</option>
                 <option value="admin">Admin</option>
-                <option value="sekretaris">Sekretaris Desa</option>
-                <option value="kepala">Kepala Desa</option>
+                <option value="sekretaris">Sopir</option>
+                <option value="kepala">Penumpang</option>
             </select>
         </div>
         <button class="btn btn-success">Daftar</button>

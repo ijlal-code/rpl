@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{{ route('dashboard') }}">Arsip Desa</a>
+        <a class="navbar-brand" href="{{ route('dashboard') }}">MandarMove</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ms-auto">
                 @auth
