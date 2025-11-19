@@ -6,14 +6,14 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminMiddleware
+class SopirMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->check() && auth()->user()->role === 'admin') {
+        if (auth()->check() && auth()->user()->role === 'sopir') {
             return $next($request);
         }
 
-        abort(403, 'Akses khusus admin.');
+        abort(403, 'Akses khusus sopir.');
     }
 }
