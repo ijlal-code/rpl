@@ -21,4 +21,9 @@ class Rute extends Model
     {
         return $this->hasMany(Pesanan::class);
     }
+
+    public function jadwal()
+    {
+        return $this->hasMany(JadwalSopir::class);
+    }
 }

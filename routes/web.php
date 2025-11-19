@@ -54,7 +54,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
 Route::middleware(['auth', 'sopir'])->group(function () {
     Route::get('/sopir', [SopirController::class, 'dashboard'])->name('sopir.dashboard');
     Route::post('/sopir/pesanan/{pesanan}/konfirmasi', [SopirController::class, 'konfirmasi'])->name('sopir.pesanan.konfirmasi');
-    Route::post('/sopir/kendaraan/{kendaraan}/status', [SopirController::class, 'ubahStatusKendaraan'])->name('sopir.kendaraan.status');
+    Route::post('/sopir/jadwal', [SopirController::class, 'simpanJadwal'])->name('sopir.jadwal.store');
+    Route::post('/sopir/jadwal/{jadwal}/status', [SopirController::class, 'ubahStatusJadwal'])->name('sopir.jadwal.status');
 });
 
 Route::middleware(['auth', 'penumpang'])->group(function () {

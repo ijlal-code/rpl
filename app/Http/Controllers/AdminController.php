@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JadwalSopir;
 use App\Models\Kendaraan;
 use App\Models\Pesanan;
-use App\Models\Rute;
-use App\Models\Sopir;
 use App\Models\User;
 
 class AdminController extends Controller
@@ -17,11 +16,13 @@ class AdminController extends Controller
             'sopir' => User::where('role', 'sopir')->count(),
             'kendaraan' => Kendaraan::count(),
             'pesanan' => Pesanan::count(),
+            'jadwal_aktif' => JadwalSopir::where('status', 'aktif')->count(),
         ];
 
         return view('dashboard.admin', [
             'statistik' => $statistik,
             'pesananTerbaru' => Pesanan::with(['penumpang', 'rute'])->latest()->take(5)->get(),
+            'jadwalTerbaru' => JadwalSopir::with(['sopir.user', 'rute'])->latest()->take(5)->get(),
         ]);
     }
 
@@ -43,10 +44,12 @@ class AdminController extends Controller
                 'sopir' => User::where('role', 'sopir')->count(),
                 'kendaraan' => Kendaraan::count(),
                 'pesanan' => $pesanan->count(),
+                'jadwal_aktif' => JadwalSopir::where('status', 'aktif')->count(),
             ],
             'pesananTerbaru' => $pesanan->take(5),
             'laporan' => $pesanan,
             'diagrams' => $diagrams,
+            'jadwalTerbaru' => JadwalSopir::with(['sopir.user', 'rute'])->latest()->take(5)->get(),
         ]);
     }
 }

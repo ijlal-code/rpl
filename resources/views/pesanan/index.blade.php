@@ -7,8 +7,8 @@
         <thead>
         <tr>
             <th>Penumpang</th>
+            <th>Sopir</th>
             <th>Rute</th>
-            <th>Kendaraan</th>
             <th>Jadwal</th>
             <th>Status</th>
             <th>Aksi</th>
@@ -18,8 +18,8 @@
         @foreach($pesanan as $item)
             <tr>
                 <td>{{ $item->penumpang->name ?? '-' }}</td>
+                <td>{{ $item->sopir->nama ?? $item->jadwal->sopir->nama ?? '-' }}</td>
                 <td>{{ $item->rute->nama_rute ?? '-' }}</td>
-                <td>{{ $item->kendaraan->nama ?? '-' }}</td>
                 <td>{{ $item->tanggal_keberangkatan }} {{ $item->jam_keberangkatan }}</td>
                 <td>{{ $item->status }}</td>
                 <td>

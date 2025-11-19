@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\JadwalSopir;
 use App\Models\Kendaraan;
 use App\Models\Pesanan;
 use App\Models\Rute;
@@ -70,13 +71,29 @@ class DatabaseSeeder extends Seeder
             Kendaraan::create($item);
         }
 
+        $jadwal = collect([
+            ['sopir' => $sopirUsers[0] ?? null, 'rute' => $rute[0] ?? null, 'tanggal' => now()->toDateString(), 'jam' => '08:00', 'status' => 'aktif'],
+            ['sopir' => $sopirUsers[1] ?? null, 'rute' => $rute[1] ?? null, 'tanggal' => now()->toDateString(), 'jam' => '10:00', 'status' => 'sedang_jalan'],
+            ['sopir' => $sopirUsers[2] ?? null, 'rute' => $rute[2] ?? null, 'tanggal' => now()->addDay()->toDateString(), 'jam' => '14:00', 'status' => 'tidak_aktif'],
+        ])->filter(fn ($item) => $item['sopir'] && $item['rute'])
+            ->map(fn ($item) => JadwalSopir::create([
+                'sopir_id' => $item['sopir']->id,
+                'rute_id' => $item['rute']->id,
+                'tanggal_keberangkatan' => $item['tanggal'],
+                'jam_keberangkatan' => $item['jam'],
+                'status' => $item['status'],
+                'catatan' => 'Jadwal awal sistem',
+            ]))
+            ->values();
+
         Pesanan::create([
             'user_id' => $penumpang->id,
             'sopir_id' => $sopirUsers[0]->id ?? null,
             'kendaraan_id' => 1,
+            'jadwal_id' => $jadwal[0]->id ?? null,
             'rute_id' => $rute[0]->id,
-            'tanggal_keberangkatan' => now()->toDateString(),
-            'jam_keberangkatan' => '08:00',
+            'tanggal_keberangkatan' => $jadwal[0]->tanggal_keberangkatan ?? now()->toDateString(),
+            'jam_keberangkatan' => $jadwal[0]->jam_keberangkatan ?? '08:00',
             'status' => 'dikonfirmasi',
             'catatan' => 'Seat depan',
         ]);
