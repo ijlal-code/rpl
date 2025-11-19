@@ -2,68 +2,153 @@
 
 @section('content')
 <div class="container py-4">
-    <h1 class="mb-3">Dashboard Sopir</h1>
-    <h5 class="mb-2">Pesanan Masuk</h5>
-    <table class="table table-hover">
-        <thead>
-        <tr>
-            <th>Penumpang</th>
-            <th>Rute</th>
-            <th>Waktu</th>
-            <th>Status</th>
-            <th>Aksi</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach($pesanan as $item)
-            <tr>
-                <td>{{ $item->penumpang->name ?? '-' }}</td>
-                <td>{{ $item->rute->nama_rute ?? '-' }}</td>
-                <td>{{ $item->tanggal_keberangkatan }} {{ $item->jam_keberangkatan }}</td>
-                <td>{{ $item->status }}</td>
-                <td>
-                    @if($item->status === 'menunggu')
-                        <form method="POST" action="{{ route('sopir.pesanan.konfirmasi', $item) }}" class="d-inline">
-                            @csrf
-                            <button class="btn btn-sm btn-success">Konfirmasi</button>
-                        </form>
-                    @endif
-                </td>
-            </tr>
-        @endforeach
-        </tbody>
-    </table>
+    <h1 class="mb-1">Dashboard Sopir</h1>
+    <p class="text-muted mb-4">Kelola jadwal keberangkatan Mobil Majene dan konfirmasi pesanan penumpang.</p>
 
-    <h5 class="mt-4">Kendaraan Saya</h5>
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th>Nama</th>
-            <th>Plat</th>
-            <th>Status</th>
-            <th>Ubah</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach($kendaraan as $item)
-            <tr>
-                <td>{{ $item->nama }}</td>
-                <td>{{ $item->plat_nomor }}</td>
-                <td><span class="badge text-bg-info">{{ $item->status }}</span></td>
-                <td>
-                    <form method="POST" action="{{ route('sopir.kendaraan.status', $item) }}" class="d-flex gap-2">
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <div class="row g-3 mb-4">
+        <div class="col-lg-5">
+            <div class="card h-100">
+                <div class="card-header">Atur Jadwal Keberangkatan</div>
+                <div class="card-body">
+                    <form method="POST" action="{{ route('sopir.jadwal.store') }}" class="d-flex flex-column gap-3">
                         @csrf
-                        <select name="status" class="form-select form-select-sm">
-                            <option value="siap">Siap</option>
-                            <option value="jalan">Jalan</option>
-                            <option value="selesai">Selesai</option>
-                        </select>
-                        <button class="btn btn-sm btn-primary" type="submit">Update</button>
+                        <div>
+                            <label class="form-label">Rute</label>
+                            <select name="rute_id" class="form-select" required>
+                                @foreach($rute as $item)
+                                    <option value="{{ $item->id }}">{{ $item->nama_rute }} ({{ $item->asal }} - {{ $item->tujuan }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label class="form-label">Tanggal</label>
+                                <input type="date" name="tanggal_keberangkatan" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Jam</label>
+                                <input type="time" name="jam_keberangkatan" class="form-control" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label">Status Awal</label>
+                            <select name="status" class="form-select" required>
+                                <option value="aktif">Aktif</option>
+                                <option value="sedang_jalan">Sedang jalan</option>
+                                <option value="tidak_aktif">Tidak aktif</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Catatan (opsional)</label>
+                            <textarea name="catatan" class="form-control" rows="2" placeholder="Contoh: menunggu penumpang di terminal..."></textarea>
+                        </div>
+                        <button class="btn btn-primary" type="submit">Simpan Jadwal</button>
                     </form>
-                </td>
-            </tr>
-        @endforeach
-        </tbody>
-    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div class="card h-100">
+                <div class="card-header">Jadwal Saya</div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped mb-0">
+                            <thead>
+                            <tr>
+                                <th>Rute</th>
+                                <th>Keberangkatan</th>
+                                <th>Status</th>
+                                <th>Catatan</th>
+                                <th>Aksi</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @forelse($jadwal as $item)
+                                <tr>
+                                    <td>{{ $item->rute->nama_rute ?? '-' }}</td>
+                                    <td>{{ $item->tanggal_keberangkatan }} {{ $item->jam_keberangkatan }}</td>
+                                    <td><span class="badge text-bg-secondary text-capitalize">{{ str_replace('_', ' ', $item->status) }}</span></td>
+                                    <td>{{ $item->catatan ?? '-' }}</td>
+                                    <td>
+                                        <form method="POST" action="{{ route('sopir.jadwal.status', $item) }}" class="d-flex gap-2">
+                                            @csrf
+                                            <select name="status" class="form-select form-select-sm">
+                                                <option value="aktif" @selected($item->status === 'aktif')>Aktif</option>
+                                                <option value="sedang_jalan" @selected($item->status === 'sedang_jalan')>Sedang jalan</option>
+                                                <option value="tidak_aktif" @selected($item->status === 'tidak_aktif')>Tidak aktif</option>
+                                            </select>
+                                            <button class="btn btn-sm btn-outline-primary" type="submit">Ubah</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center py-4">Belum ada jadwal yang dibuat.</td>
+                                </tr>
+                            @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">Pesanan Masuk</div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                    <tr>
+                        <th>Penumpang</th>
+                        <th>Rute</th>
+                        <th>Jadwal</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @forelse($pesanan as $item)
+                        <tr>
+                            <td>{{ $item->penumpang->name ?? '-' }}</td>
+                            <td>{{ $item->rute->nama_rute ?? '-' }}</td>
+                            <td>{{ $item->tanggal_keberangkatan }} {{ $item->jam_keberangkatan }}</td>
+                            <td><span class="badge text-bg-secondary text-capitalize">{{ $item->status }}</span></td>
+                            <td>
+                                @if($item->status === 'menunggu')
+                                    <form method="POST" action="{{ route('sopir.pesanan.konfirmasi', $item) }}" class="d-inline">
+                                        @csrf
+                                        <button class="btn btn-sm btn-success">Konfirmasi</button>
+                                    </form>
+                                @else
+                                    <span class="text-muted">Tidak ada aksi</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center py-4">Belum ada pesanan yang masuk.</td>
+                        </tr>
+                    @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection

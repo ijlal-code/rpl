@@ -5,10 +5,10 @@
     <h1 class="mb-4">Dashboard Admin</h1>
     <div class="row g-3 mb-4">
         @foreach($statistik as $label => $value)
-            <div class="col-md-3">
+            <div class="col-6 col-md-4 col-lg-2">
                 <div class="card text-bg-primary h-100">
                     <div class="card-body">
-                        <p class="text-uppercase small mb-1">{{ ucfirst($label) }}</p>
+                        <p class="text-uppercase small mb-1">{{ ucwords(str_replace('_', ' ', $label)) }}</p>
                         <h3 class="fw-bold">{{ $value }}</h3>
                     </div>
                 </div>
@@ -37,6 +37,30 @@
         @endforeach
         </tbody>
     </table>
+
+    @isset($jadwalTerbaru)
+        <h5 class="mt-4">Monitoring Jadwal Sopir</h5>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Sopir</th>
+                <th>Rute</th>
+                <th>Jadwal</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach($jadwalTerbaru as $item)
+                <tr>
+                    <td>{{ $item->sopir->nama ?? $item->sopir->user->name ?? '-' }}</td>
+                    <td>{{ $item->rute->nama_rute ?? '-' }}</td>
+                    <td>{{ $item->tanggal_keberangkatan }} {{ $item->jam_keberangkatan }}</td>
+                    <td><span class="badge text-bg-secondary text-capitalize">{{ str_replace('_', ' ', $item->status) }}</span></td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
+    @endisset
 
     @isset($laporan)
         <div class="mt-4">
