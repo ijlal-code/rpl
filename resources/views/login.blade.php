@@ -13,6 +13,9 @@
             <div class="card shadow-sm">
                 <div class="card-header">Login</div>
                 <div class="card-body">
+                    @if (session('status'))
+                        <div class="alert alert-success">{{ session('status') }}</div>
+                    @endif
                     @if ($errors->any())
                         <div class="alert alert-danger">{{ $errors->first() }}</div>
                     @endif

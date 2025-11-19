@@ -2,10 +2,8 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\KendaraanController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\RekomendasiKNNController;
-use App\Http\Controllers\RuteController;
 use App\Http\Controllers\SopirController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -35,16 +33,6 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/admin/laporan', [AdminController::class, 'laporan'])->name('admin.laporan');
-
-    Route::get('/kendaraan', [KendaraanController::class, 'index'])->name('kendaraan.index');
-    Route::post('/kendaraan', [KendaraanController::class, 'store'])->name('kendaraan.store');
-    Route::put('/kendaraan/{kendaraan}', [KendaraanController::class, 'update'])->name('kendaraan.update');
-    Route::delete('/kendaraan/{kendaraan}', [KendaraanController::class, 'destroy'])->name('kendaraan.destroy');
-
-    Route::get('/rute', [RuteController::class, 'index'])->name('rute.index');
-    Route::post('/rute', [RuteController::class, 'store'])->name('rute.store');
-    Route::put('/rute/{rute}', [RuteController::class, 'update'])->name('rute.update');
-    Route::delete('/rute/{rute}', [RuteController::class, 'destroy'])->name('rute.destroy');
 
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan.index');
     Route::post('/pesanan', [PesananController::class, 'store'])->name('pesanan.store');

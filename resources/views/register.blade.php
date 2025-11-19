@@ -27,7 +27,7 @@
                         @csrf
                         <div class="mb-3">
                             <label class="form-label">Daftar sebagai</label>
-                            <select name="role" class="form-select" required>
+                            <select name="role" class="form-select" required id="role-select">
                                 <option value="" disabled {{ old('role') ? '' : 'selected' }}>Pilih peran</option>
                                 <option value="penumpang" {{ old('role') === 'penumpang' ? 'selected' : '' }}>Penumpang</option>
                                 <option value="sopir" {{ old('role') === 'sopir' ? 'selected' : '' }}>Sopir</option>
@@ -38,8 +38,21 @@
                             <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
                         </div>
                         <div class="mb-3">
+                            <label class="form-label">Nomor Telepon</label>
+                            <input type="tel" name="telepon" class="form-control" value="{{ old('telepon') }}" placeholder="Contoh: 08xx" required>
+                            <small class="text-muted">Wajib untuk sopir, opsional untuk penumpang.</small>
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label">Email</label>
                             <input type="email" name="email" class="form-control" value="{{ old('email') }}" required>
+                        </div>
+                        <div class="mb-3 sopir-field" style="display: none;">
+                            <label class="form-label">Nomor SIM</label>
+                            <input type="text" name="nomor_sim" class="form-control" value="{{ old('nomor_sim') }}" placeholder="Masukkan nomor SIM sopir">
+                        </div>
+                        <div class="mb-3 sopir-field" style="display: none;">
+                            <label class="form-label">Pengalaman Mengemudi (opsional)</label>
+                            <input type="text" name="pengalaman" class="form-control" value="{{ old('pengalaman') }}" placeholder="Contoh: 3 tahun perjalanan antar kota">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Password</label>
@@ -57,5 +70,21 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const roleSelect = document.getElementById('role-select');
+        const sopirFields = document.querySelectorAll('.sopir-field');
+        const teleponInput = document.querySelector('input[name="telepon"]');
+
+        const toggleSopirFields = () => {
+            const isSopir = roleSelect.value === 'sopir';
+            sopirFields.forEach(field => field.style.display = isSopir ? 'block' : 'none');
+            teleponInput.required = isSopir;
+        };
+
+        roleSelect.addEventListener('change', toggleSopirFields);
+        toggleSopirFields();
+    });
+</script>
 </body>
 </html>
