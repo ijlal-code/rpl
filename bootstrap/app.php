@@ -17,8 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // Route middleware (ini yang kamu butuhkan)
         $middleware->alias([
             'admin' => \App\Middleware\AdminMiddleware::class,
-            'sekretaris' => \App\Middleware\SekretarisMiddleware::class,
-            'kepala' => \App\Middleware\KepalaMiddleware::class,
+            'sopir' => \App\Middleware\SopirMiddleware::class,
+            'penumpang' => \App\Middleware\PenumpangMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
