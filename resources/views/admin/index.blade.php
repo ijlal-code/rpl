@@ -18,7 +18,7 @@
                     <div class="mb-4">
                         <i class="bi bi-people-fill fs-1 text-primary"></i>
                     </div>
-                    <h5 class="card-title fw-bold">Kelola Pengguna</h5>
+                    <h5 class="card-title fw-bold">Kelola Data</h5>
                     <p class="card-text text-muted">Tambah, ubah, atau hapus akun pengguna sistem dengan mudah dan cepat.</p>
                     <a href="{{ route('admin.users.index') }}" class="btn btn-outline-primary">
                         <i class="bi bi-arrow-right-circle"></i> Masuk
@@ -27,7 +27,7 @@
             </div>
         </div>
 
-        <!-- Card: Lihat Arsip -->
+        <!-- Card: Lihat Arsip
         <div class="col-md-5">
             <div class="card h-100 border-0 shadow rounded-4">
                 <div class="card-body text-center">
@@ -41,7 +41,7 @@
                     </a>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </div>
 @endsection

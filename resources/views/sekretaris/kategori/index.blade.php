@@ -15,8 +15,8 @@
         {{-- Header --}}
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h2 class="fw-bold text-primary mb-0">📁 Kelola Kategori Arsip</h2>
-                <small class="text-muted">Tambah, edit, atau hapus kategori arsip</small>
+                <h2 class="fw-bold text-primary mb-0">🗺️ Kelola Data Rute Angkutan</h2>
+                <small class="text-muted">Tambah, edit, atau hapus rute yang dilayani angkutan</small>
             </div>
             <a href="{{ route('dashboard') }}" class="btn btn-outline-dark">
                 <i class="bi bi-arrow-left-circle me-1"></i> Kembali ke Dashboard
@@ -27,14 +27,14 @@
         <div class="row mb-3 align-items-center">
             <div class="col-md-4 mb-2 mb-md-0">
                 <a href="{{ route('sekretaris.kategori.create') }}" class="btn btn-success w-100">
-                    <i class="bi bi-plus-circle me-1"></i> Tambah Kategori
+                    <i class="bi bi-plus-circle me-1"></i> Tambah Rute Baru
                 </a>
             </div>
 
             <div class="col-md-8">
                 <form action="{{ route('sekretaris.kategori.index') }}" method="GET" class="row g-2 justify-content-end" role="search">
                     <div class="col-auto flex-grow-1">
-                        <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="🔍 Cari kategori...">
+                        <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="🔍 Cari nama rute...">
                     </div>
                     <div class="col-auto d-flex gap-2">
                         <button type="submit" class="btn btn-primary fw-semibold">
@@ -54,7 +54,7 @@
                 <thead class="table-light text-center">
                     <tr>
                         <th style="width: 5%;">No</th>
-                        <th>Nama Kategori</th>
+                        <th>Nama Rute (sebagai Kategori)</th>
                         <th style="width: 20%;">Aksi</th>
                     </tr>
                 </thead>
@@ -66,8 +66,9 @@
                             <td class="text-center align-middle">
                                 <a href="{{ route('sekretaris.kategori.edit', $kat->id) }}" class="btn btn-sm btn-warning me-1 mb-1 mb-md-0">
                                     <i class="bi bi-pencil-square"></i> Edit
-                                </a>
-                                <form action="{{ route('sekretaris.kategori.destroy', $kat->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus kategori ini?')">
+                                </a
+                                >
+                                <form action="{{ route('sekretaris.kategori.destroy', $kat->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus Rute ini?')">
                                     @csrf
                                     @method('DELETE')
                                     <button class="btn btn-sm btn-danger">
@@ -78,7 +79,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="text-center text-muted">Belum ada kategori tersedia.</td>
+                            <td colspan="3" class="text-center text-muted">Belum ada data Rute tersedia.</td>
                         </tr>
                     @endforelse
                 </tbody>

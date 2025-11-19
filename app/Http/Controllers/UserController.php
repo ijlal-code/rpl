@@ -2,94 +2,49 @@
 
 namespace App\Http\Controllers;
 
-
-use App\Models\User;
+use App\Models\Kendaraan;
+use App\Models\Pesanan;
+use App\Models\Rute;
+use App\Models\Sopir;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
-
-
 
 class UserController extends Controller
 {
-    public function index() {
-        $users = User::all();
-        return view('admin.users.index', compact('users'));
-    }
-
-    public function create() {
-        return view('admin.users.create');
-    }
-
-    public function store(Request $request)
+    public function dashboard()
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'role' => 'required|in:admin,sekretaris,kepala',
-            'password' => 'required|string|',
+        return view('dashboard.penumpang', [
+            'kendaraan' => Kendaraan::with('sopir')->where('status', 'siap')->get(),
+            'rute' => Rute::all(),
+            'pesanan' => Pesanan::with(['rute', 'kendaraan'])->where('user_id', auth()->id())->latest()->get(),
         ]);
-    
-        try {
-            DB::transaction(function () use ($request) {
-                $request['password'] = Hash::make($request->password);
-                User::create($request->all());
-            });
-    
-            return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil ditambahkan.');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal menambahkan pengguna: ' . $e->getMessage());
+    }
+
+    public function buatPesanan(Request $request)
+    {
+        $data = $request->validate([
+            'rute_id' => 'required|exists:rutes,id',
+            'kendaraan_id' => 'nullable|exists:kendaraans,id',
+            'tanggal_keberangkatan' => 'required|date',
+            'jam_keberangkatan' => 'required',
+            'catatan' => 'nullable|string',
+        ]);
+
+        $data['user_id'] = auth()->id();
+
+        if ($data['kendaraan_id']) {
+            $kendaraan = Kendaraan::find($data['kendaraan_id']);
+            $data['sopir_id'] = $kendaraan?->sopir_id;
         }
-    }
-    
 
-    public function edit($id) {
-        $user = User::findOrFail($id);
-        return view('admin.users.edit', compact('user'));
+        Pesanan::create($data);
+
+        return redirect()->route('penumpang.pesanan')->with('success', 'Pesanan berhasil dibuat.');
     }
 
-    public function update(Request $request, $id)
-{
-    $user = User::findOrFail($id);
-
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users,email,' . $user->id,
-        'role' => 'required|in:admin,sekretaris,kepala',
-        'password' => 'nullable|string|min:6',
-    ]);
-
-    try {
-        DB::transaction(function () use ($request, $user) {
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->role = $request->role;
-
-            if ($request->filled('password')) {
-                $user->password = Hash::make($request->password);
-            }
-
-            $user->save();
-        });
-
-        return redirect()->route('admin.users.index')->with('success', 'Data pengguna berhasil diperbarui.');
-    } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'Gagal memperbarui data: ' . $e->getMessage());
+    public function pesanan()
+    {
+        return view('pesanan.index', [
+            'pesanan' => Pesanan::with(['rute', 'kendaraan', 'sopir'])->where('user_id', auth()->id())->get(),
+        ]);
     }
-}
-
-
-public function destroy($id)
-{
-    try {
-        DB::transaction(function () use ($id) {
-            User::destroy($id);
-        });
-
-        return back()->with('success', 'Pengguna berhasil dihapus.');
-    } catch (\Exception $e) {
-        return back()->with('error', 'Gagal menghapus pengguna: ' . $e->getMessage());
-    }
-}
-
 }
