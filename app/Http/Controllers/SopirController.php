@@ -25,7 +25,6 @@ class SopirController extends Controller
                 ->orderByDesc('tanggal_keberangkatan')
                 ->orderByDesc('jam_keberangkatan')
                 ->get(),
-            'rute' => Rute::all(),
         ]);
     }
 
@@ -38,8 +37,9 @@ class SopirController extends Controller
 
     public function simpanJadwal(Request $request)
     {
-        $request->validate([
-            'rute_id' => 'required|exists:rutes,id',
+        $data = $request->validate([
+            'rute_pilihan' => 'required|in:majene_polewali,polewali_majene,custom',
+            'custom_rute' => 'required_if:rute_pilihan,custom|nullable|string|max:255',
             'tanggal_keberangkatan' => 'required|date',
             'jam_keberangkatan' => 'required',
             'status' => 'required|in:aktif,sedang_jalan,tidak_aktif',
@@ -52,13 +52,15 @@ class SopirController extends Controller
             return back()->withErrors(['jadwal' => 'Sopir tidak ditemukan.']);
         }
 
+        $rute = $this->resolveRute($data['rute_pilihan'], $data['custom_rute'] ?? null);
+
         JadwalSopir::create([
             'sopir_id' => $sopirId,
-            'rute_id' => $request->rute_id,
-            'tanggal_keberangkatan' => $request->tanggal_keberangkatan,
-            'jam_keberangkatan' => $request->jam_keberangkatan,
-            'status' => $request->status,
-            'catatan' => $request->catatan,
+            'rute_id' => $rute->id,
+            'tanggal_keberangkatan' => $data['tanggal_keberangkatan'],
+            'jam_keberangkatan' => $data['jam_keberangkatan'],
+            'status' => $data['status'],
+            'catatan' => $data['catatan'],
         ]);
 
         return back()->with('success', 'Jadwal keberangkatan tersimpan.');
@@ -79,5 +81,39 @@ class SopirController extends Controller
         $jadwal->update(['status' => $request->status]);
 
         return back()->with('success', 'Status jadwal diperbarui.');
+    }
+
+    private function resolveRute(string $pilihan, ?string $customRute): Rute
+    {
+        return match ($pilihan) {
+            'majene_polewali' => Rute::firstOrCreate(
+                ['nama_rute' => 'Majene - Polewali'],
+                ['asal' => 'Majene', 'tujuan' => 'Polewali']
+            ),
+            'polewali_majene' => Rute::firstOrCreate(
+                ['nama_rute' => 'Polewali - Majene'],
+                ['asal' => 'Polewali', 'tujuan' => 'Majene']
+            ),
+            'custom' => $this->buatRuteCustom($customRute),
+        };
+    }
+
+    private function buatRuteCustom(?string $input): Rute
+    {
+        $input = trim($input ?? '');
+
+        if ($input === '') {
+            abort(422, 'Rute khusus harus diisi.');
+        }
+
+        [$asal, $tujuan] = array_pad(array_map('trim', explode('-', $input, 2)), 2, null);
+
+        return Rute::firstOrCreate(
+            ['nama_rute' => $input],
+            [
+                'asal' => $asal ?: $input,
+                'tujuan' => $tujuan ?: ($asal ?: $input),
+            ]
+        );
     }
 }

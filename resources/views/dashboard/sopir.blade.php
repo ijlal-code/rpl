@@ -28,11 +28,22 @@
                         @csrf
                         <div>
                             <label class="form-label">Rute</label>
-                            <select name="rute_id" class="form-select" required>
-                                @foreach($rute as $item)
-                                    <option value="{{ $item->id }}">{{ $item->nama_rute }} ({{ $item->asal }} - {{ $item->tujuan }})</option>
-                                @endforeach
-                            </select>
+                            <div class="d-flex flex-column gap-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="rute_pilihan" id="rute-majene-polewali" value="majene_polewali" required>
+                                    <label class="form-check-label" for="rute-majene-polewali">Majene - Polewali</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="rute_pilihan" id="rute-polewali-majene" value="polewali_majene" required>
+                                    <label class="form-check-label" for="rute-polewali-majene">Polewali - Majene</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="rute_pilihan" id="rute-custom" value="custom" required>
+                                    <label class="form-check-label" for="rute-custom">Rute lain (tulis manual)</label>
+                                </div>
+                                <input type="text" name="custom_rute" class="form-control" placeholder="Contoh: Majene - Mamuju" aria-label="Rute lain" disabled>
+                                <small class="text-muted">Isi jika memilih rute lain. Gunakan format Asal - Tujuan.</small>
+                            </div>
                         </div>
                         <div class="row g-2">
                             <div class="col-md-6">
@@ -151,4 +162,21 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const customInput = document.querySelector('input[name="custom_rute"]');
+        const radios = document.querySelectorAll('input[name="rute_pilihan"]');
+
+        const toggleCustomInput = () => {
+            const isCustom = document.getElementById('rute-custom').checked;
+            customInput.disabled = !isCustom;
+            if (!isCustom) {
+                customInput.value = '';
+            }
+        };
+
+        radios.forEach(radio => radio.addEventListener('change', toggleCustomInput));
+    });
+</script>
 @endsection
