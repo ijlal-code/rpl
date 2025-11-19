@@ -48,12 +48,15 @@
                         <div class="row g-2">
                             <div class="col-md-6">
                                 <label class="form-label">Tanggal</label>
-                                <input type="date" name="tanggal_keberangkatan" class="form-control" required>
+                                <input type="date" name="tanggal_keberangkatan" id="tanggal-keberangkatan" value="{{ old('tanggal_keberangkatan') }}" class="form-control" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Jam</label>
-                                <input type="time" name="jam_keberangkatan" class="form-control" required>
+                                <input type="time" name="jam_keberangkatan" id="jam-keberangkatan" value="{{ old('jam_keberangkatan') }}" class="form-control" required>
                             </div>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-outline-secondary w-100" id="isi-waktu-sekarang">Gunakan waktu saat ini</button>
                         </div>
                         <div>
                             <label class="form-label">Status Awal</label>
@@ -167,6 +170,20 @@
     document.addEventListener('DOMContentLoaded', () => {
         const customInput = document.querySelector('input[name="custom_rute"]');
         const radios = document.querySelectorAll('input[name="rute_pilihan"]');
+        const tombolWaktuSekarang = document.getElementById('isi-waktu-sekarang');
+        const inputTanggal = document.getElementById('tanggal-keberangkatan');
+        const inputJam = document.getElementById('jam-keberangkatan');
+
+        const isiWaktuSekarang = () => {
+            const sekarang = new Date();
+            const pad = (angka) => angka.toString().padStart(2, '0');
+
+            const tanggal = `${sekarang.getFullYear()}-${pad(sekarang.getMonth() + 1)}-${pad(sekarang.getDate())}`;
+            const jam = `${pad(sekarang.getHours())}:${pad(sekarang.getMinutes())}`;
+
+            inputTanggal.value = tanggal;
+            inputJam.value = jam;
+        };
 
         const toggleCustomInput = () => {
             const isCustom = document.getElementById('rute-custom').checked;
@@ -177,6 +194,12 @@
         };
 
         radios.forEach(radio => radio.addEventListener('change', toggleCustomInput));
+
+        tombolWaktuSekarang?.addEventListener('click', isiWaktuSekarang);
+
+        if (!inputTanggal.value || !inputJam.value) {
+            isiWaktuSekarang();
+        }
     });
 </script>
 @endsection

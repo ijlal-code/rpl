@@ -28,8 +28,8 @@ class AuthController extends Controller
             'password' => 'required|min:6|confirmed',
             'role' => 'required|in:penumpang,sopir',
             'phone' => 'nullable|string|max:20',
-            'telepon' => 'required_if:role,sopir|string|max:20',
-            'nomor_sim' => 'required_if:role,sopir|string|max:50',
+            'telepon' => 'required_if:role,sopir|nullable|string|max:20',
+            'nomor_sim' => 'required_if:role,sopir|nullable|string|max:50',
             'pengalaman' => 'nullable|string|max:255',
         ]);
 
