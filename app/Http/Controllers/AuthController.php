@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Sopir;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -26,6 +27,10 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
             'role' => 'required|in:penumpang,sopir',
+            'phone' => 'nullable|string|max:20',
+            'telepon' => 'required_if:role,sopir|string|max:20',
+            'nomor_sim' => 'required_if:role,sopir|string|max:50',
+            'pengalaman' => 'nullable|string|max:255',
         ]);
 
         $user = User::create([
@@ -33,11 +38,20 @@ class AuthController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'role' => $data['role'],
+            'phone' => $data['telepon'] ?? $data['phone'] ?? null,
         ]);
 
-        Auth::login($user);
+        if ($user->role === 'sopir') {
+            Sopir::create([
+                'user_id' => $user->id,
+                'nama' => $user->name,
+                'nomor_sim' => $data['nomor_sim'],
+                'telepon' => $data['telepon'],
+                'pengalaman' => $data['pengalaman'] ?? null,
+            ]);
+        }
 
-        return redirect()->route('dashboard');
+        return redirect()->route('login')->with('status', 'Registrasi berhasil, silakan login.');
     }
 
     public function login(Request $request)

@@ -9,8 +9,6 @@
                 @auth
                     @if(auth()->user()->role === 'admin')
                         <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('kendaraan.index') }}">Kendaraan</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('rute.index') }}">Rute</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('pesanan.index') }}">Pesanan</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('admin.laporan') }}">Laporan</a></li>
                     @elseif(auth()->user()->role === 'sopir')
