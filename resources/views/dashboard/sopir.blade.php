@@ -75,7 +75,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-7">
+        <div class="col-lg-7" id="jadwal-saya">
             <div class="card h-100">
                 <div class="card-header">Jadwal Saya</div>
                 <div class="card-body p-0">
@@ -98,6 +98,7 @@
                                     <td><span class="badge text-bg-secondary text-capitalize">{{ str_replace('_', ' ', $item->status) }}</span></td>
                                     <td>{{ $item->catatan ?? '-' }}</td>
                                     <td>
+                                        <a href="{{ route('sopir.jadwal.edit', $item) }}" class="btn btn-sm btn-outline-secondary mb-2 w-100">Edit</a>
                                         <form method="POST" action="{{ route('sopir.jadwal.update', $item) }}" class="d-flex flex-column gap-2">
                                             @csrf
                                             @method('PATCH')
@@ -133,7 +134,16 @@
         </div>
     </div>
 
-    <div class="card">
+    @php
+        $statusBadge = [
+            'menunggu' => 'warning',
+            'dikonfirmasi' => 'primary',
+            'selesai' => 'success',
+            'dibatalkan' => 'secondary',
+        ];
+    @endphp
+
+    <div class="card" id="pesanan-masuk">
         <div class="card-header">Pesanan Masuk</div>
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -153,12 +163,17 @@
                             <td>{{ $item->penumpang->name ?? '-' }}</td>
                             <td>{{ $item->rute->nama_rute ?? '-' }}</td>
                             <td>{{ $item->tanggal_keberangkatan }} {{ $item->jam_keberangkatan }}</td>
-                            <td><span class="badge text-bg-secondary text-capitalize">{{ $item->status }}</span></td>
+                            <td><span class="badge text-bg-{{ $statusBadge[$item->status] ?? 'secondary' }} text-capitalize">{{ str_replace('_', ' ', $item->status) }}</span></td>
                             <td>
                                 @if($item->status === 'menunggu')
                                     <form method="POST" action="{{ route('sopir.pesanan.konfirmasi', $item) }}" class="d-inline">
                                         @csrf
                                         <button class="btn btn-sm btn-success">Konfirmasi</button>
+                                    </form>
+                                @elseif($item->status === 'dikonfirmasi')
+                                    <form method="POST" action="{{ route('sopir.pesanan.selesai', $item) }}" class="d-inline">
+                                        @csrf
+                                        <button class="btn btn-sm btn-outline-primary">Tandai Selesai</button>
                                     </form>
                                 @else
                                     <span class="text-muted">Tidak ada aksi</span>

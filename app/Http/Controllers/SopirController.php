@@ -30,9 +30,41 @@ class SopirController extends Controller
 
     public function konfirmasi(Pesanan $pesanan)
     {
+        $sopirId = auth()->user()->sopir->id ?? null;
+
+        if ($pesanan->sopir_id && $pesanan->sopir_id !== $sopirId) {
+            abort(403);
+        }
+
         $pesanan->update(['status' => 'dikonfirmasi']);
 
         return back()->with('success', 'Pesanan berhasil dikonfirmasi.');
+    }
+
+    public function selesaikan(Pesanan $pesanan)
+    {
+        $sopirId = auth()->user()->sopir->id ?? null;
+
+        if ($pesanan->sopir_id !== $sopirId) {
+            abort(403);
+        }
+
+        $pesanan->update(['status' => 'selesai']);
+
+        return back()->with('success', 'Pesanan telah ditandai selesai.');
+    }
+
+    public function editJadwal(JadwalSopir $jadwal)
+    {
+        $sopirId = auth()->user()->sopir->id ?? null;
+
+        if ($jadwal->sopir_id !== $sopirId) {
+            abort(403);
+        }
+
+        return view('sopir.jadwal.edit', [
+            'jadwal' => $jadwal->load('rute'),
+        ]);
     }
 
     public function simpanJadwal(Request $request)
@@ -69,6 +101,10 @@ class SopirController extends Controller
     public function perbaruiJadwal(JadwalSopir $jadwal, Request $request)
     {
         $data = $request->validate([
+            'rute_pilihan' => 'sometimes|required|in:majene_polewali,polewali_majene,custom',
+            'custom_rute' => 'required_if:rute_pilihan,custom|nullable|string|max:255',
+            'tanggal_keberangkatan' => 'sometimes|required|date',
+            'jam_keberangkatan' => 'sometimes|required',
             'status' => 'required|in:aktif,sedang_jalan,tidak_aktif',
             'catatan' => 'nullable|string',
         ]);
@@ -79,9 +115,24 @@ class SopirController extends Controller
             abort(403);
         }
 
-        $jadwal->update($data);
+        if (isset($data['rute_pilihan'])) {
+            $rute = $this->resolveRute($data['rute_pilihan'], $data['custom_rute'] ?? null);
+            $jadwal->rute_id = $rute->id;
+        }
 
-        return back()->with('success', 'Jadwal diperbarui.');
+        if (isset($data['tanggal_keberangkatan'])) {
+            $jadwal->tanggal_keberangkatan = $data['tanggal_keberangkatan'];
+        }
+
+        if (isset($data['jam_keberangkatan'])) {
+            $jadwal->jam_keberangkatan = $data['jam_keberangkatan'];
+        }
+
+        $jadwal->status = $data['status'];
+        $jadwal->catatan = $data['catatan'] ?? null;
+        $jadwal->save();
+
+        return redirect()->to(route('sopir.dashboard') . '#jadwal-saya')->with('success', 'Jadwal diperbarui.');
     }
 
     public function hapusJadwal(JadwalSopir $jadwal)
