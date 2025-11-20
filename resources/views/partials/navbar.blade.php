@@ -13,6 +13,8 @@
                         <li class="nav-item"><a class="nav-link" href="{{ route('admin.laporan') }}">Laporan</a></li>
                     @elseif(auth()->user()->role === 'sopir')
                         <li class="nav-item"><a class="nav-link" href="{{ route('sopir.dashboard') }}">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('sopir.dashboard') }}#jadwal-saya">Jadwal Sopir</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('sopir.dashboard') }}#pesanan-masuk">Pesanan</a></li>
                     @else
                         <li class="nav-item"><a class="nav-link" href="{{ route('penumpang.dashboard') }}">Dashboard</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('penumpang.pesanan') }}">Pesanan</a></li>

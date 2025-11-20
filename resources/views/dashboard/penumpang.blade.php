@@ -131,6 +131,15 @@
         </div>
     </div>
 
+    @php
+        $statusBadgePesanan = [
+            'menunggu' => 'warning',
+            'dikonfirmasi' => 'primary',
+            'selesai' => 'success',
+            'dibatalkan' => 'secondary',
+        ];
+    @endphp
+
     <div class="card">
         <div class="card-header">Riwayat Pesanan</div>
         <div class="card-body p-0">
@@ -150,7 +159,7 @@
                             <td>{{ $item->rute->nama_rute ?? '-' }}</td>
                             <td>{{ $item->jadwal->sopir->nama ?? $item->sopir->nama ?? '-' }}</td>
                             <td>{{ $item->tanggal_keberangkatan }} {{ $item->jam_keberangkatan }}</td>
-                            <td><span class="badge text-bg-secondary text-capitalize">{{ $item->status }}</span></td>
+                            <td><span class="badge text-bg-{{ $statusBadgePesanan[$item->status] ?? 'secondary' }} text-capitalize">{{ str_replace('_', ' ', $item->status) }}</span></td>
                         </tr>
                     @empty
                         <tr>
