@@ -66,10 +66,11 @@ class SopirController extends Controller
         return back()->with('success', 'Jadwal keberangkatan tersimpan.');
     }
 
-    public function ubahStatusJadwal(JadwalSopir $jadwal, Request $request)
+    public function perbaruiJadwal(JadwalSopir $jadwal, Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'status' => 'required|in:aktif,sedang_jalan,tidak_aktif',
+            'catatan' => 'nullable|string',
         ]);
 
         $sopirId = auth()->user()->sopir->id ?? null;
@@ -78,9 +79,22 @@ class SopirController extends Controller
             abort(403);
         }
 
-        $jadwal->update(['status' => $request->status]);
+        $jadwal->update($data);
 
-        return back()->with('success', 'Status jadwal diperbarui.');
+        return back()->with('success', 'Jadwal diperbarui.');
+    }
+
+    public function hapusJadwal(JadwalSopir $jadwal)
+    {
+        $sopirId = auth()->user()->sopir->id ?? null;
+
+        if ($jadwal->sopir_id !== $sopirId) {
+            abort(403);
+        }
+
+        $jadwal->delete();
+
+        return back()->with('success', 'Jadwal berhasil dihapus.');
     }
 
     private function resolveRute(string $pilihan, ?string $customRute): Rute

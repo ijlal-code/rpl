@@ -15,7 +15,7 @@
                         <li class="nav-item"><a class="nav-link" href="{{ route('sopir.dashboard') }}">Dashboard</a></li>
                     @else
                         <li class="nav-item"><a class="nav-link" href="{{ route('penumpang.dashboard') }}">Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('rekomendasi.index') }}">Rekomendasi</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('penumpang.pesanan') }}">Pesanan</a></li>
                     @endif
                 @endauth
             </ul>

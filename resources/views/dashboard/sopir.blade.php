@@ -98,14 +98,25 @@
                                     <td><span class="badge text-bg-secondary text-capitalize">{{ str_replace('_', ' ', $item->status) }}</span></td>
                                     <td>{{ $item->catatan ?? '-' }}</td>
                                     <td>
-                                        <form method="POST" action="{{ route('sopir.jadwal.status', $item) }}" class="d-flex gap-2">
+                                        <form method="POST" action="{{ route('sopir.jadwal.update', $item) }}" class="d-flex flex-column gap-2">
                                             @csrf
-                                            <select name="status" class="form-select form-select-sm">
-                                                <option value="aktif" @selected($item->status === 'aktif')>Aktif</option>
-                                                <option value="sedang_jalan" @selected($item->status === 'sedang_jalan')>Sedang jalan</option>
-                                                <option value="tidak_aktif" @selected($item->status === 'tidak_aktif')>Tidak aktif</option>
-                                            </select>
-                                            <button class="btn btn-sm btn-outline-primary" type="submit">Ubah</button>
+                                            @method('PATCH')
+                                            <div class="d-flex gap-2">
+                                                <select name="status" class="form-select form-select-sm">
+                                                    <option value="aktif" @selected($item->status === 'aktif')>Aktif</option>
+                                                    <option value="sedang_jalan" @selected($item->status === 'sedang_jalan')>Sedang jalan</option>
+                                                    <option value="tidak_aktif" @selected($item->status === 'tidak_aktif')>Tidak aktif</option>
+                                                </select>
+                                                <button class="btn btn-sm btn-outline-primary" type="submit">Simpan</button>
+                                            </div>
+                                            <div class="d-flex gap-2">
+                                                <input type="text" name="catatan" value="{{ old('catatan', $item->catatan) }}" class="form-control form-control-sm" placeholder="Catatan jadwal">
+                                            </div>
+                                        </form>
+                                        <form method="POST" action="{{ route('sopir.jadwal.destroy', $item) }}" class="mt-2" onsubmit="return confirm('Hapus jadwal ini?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-sm btn-outline-danger" type="submit">Hapus</button>
                                         </form>
                                     </td>
                                 </tr>

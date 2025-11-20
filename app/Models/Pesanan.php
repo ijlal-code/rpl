@@ -18,6 +18,7 @@ class Pesanan extends Model
         'tanggal_keberangkatan',
         'jam_keberangkatan',
         'status',
+        'alasan_pembatalan',
         'catatan',
     ];
 
