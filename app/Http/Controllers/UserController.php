@@ -63,6 +63,36 @@ class UserController extends Controller
         ]);
     }
 
+    public function batalkanPesanan(Request $request, Pesanan $pesanan)
+    {
+        if ($pesanan->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        if (in_array($pesanan->status, ['selesai', 'dibatalkan'])) {
+            return back()->withErrors(['pesanan' => 'Pesanan ini tidak dapat dibatalkan.']);
+        }
+
+        $data = $request->validate([
+            'alasan' => 'required|in:perubahan_rencana,menemukan_transportasi_lain,kesalahan_pemesanan,lainnya',
+            'alasan_lain' => 'required_if:alasan,lainnya|nullable|string|max:255',
+        ]);
+
+        $alasan = [
+            'perubahan_rencana' => 'Perubahan rencana perjalanan',
+            'menemukan_transportasi_lain' => 'Menemukan transportasi lain',
+            'kesalahan_pemesanan' => 'Kesalahan saat pemesanan',
+            'lainnya' => trim($data['alasan_lain'] ?? 'Alasan lain'),
+        ][$data['alasan']];
+
+        $pesanan->update([
+            'status' => 'dibatalkan',
+            'alasan_pembatalan' => $alasan,
+        ]);
+
+        return back()->with('success', 'Pesanan berhasil dibatalkan.');
+    }
+
     private function buildRekomendasi(int $userId)
     {
         $riwayat = Pesanan::select('rute_id', 'jam_keberangkatan')

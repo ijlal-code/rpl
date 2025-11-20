@@ -43,11 +43,13 @@ Route::middleware(['auth', 'sopir'])->group(function () {
     Route::get('/sopir', [SopirController::class, 'dashboard'])->name('sopir.dashboard');
     Route::post('/sopir/pesanan/{pesanan}/konfirmasi', [SopirController::class, 'konfirmasi'])->name('sopir.pesanan.konfirmasi');
     Route::post('/sopir/jadwal', [SopirController::class, 'simpanJadwal'])->name('sopir.jadwal.store');
-    Route::post('/sopir/jadwal/{jadwal}/status', [SopirController::class, 'ubahStatusJadwal'])->name('sopir.jadwal.status');
+    Route::patch('/sopir/jadwal/{jadwal}', [SopirController::class, 'perbaruiJadwal'])->name('sopir.jadwal.update');
+    Route::delete('/sopir/jadwal/{jadwal}', [SopirController::class, 'hapusJadwal'])->name('sopir.jadwal.destroy');
 });
 
 Route::middleware(['auth', 'penumpang'])->group(function () {
     Route::get('/penumpang', [UserController::class, 'dashboard'])->name('penumpang.dashboard');
     Route::post('/penumpang/pesanan', [UserController::class, 'buatPesanan'])->name('penumpang.pesan');
     Route::get('/penumpang/pesanan', [UserController::class, 'pesanan'])->name('penumpang.pesanan');
+    Route::post('/penumpang/pesanan/{pesanan}/batal', [UserController::class, 'batalkanPesanan'])->name('penumpang.pesanan.batalkan');
 });
