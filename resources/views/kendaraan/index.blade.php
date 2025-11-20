@@ -5,42 +5,44 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h1>Kendaraan</h1>
     </div>
-    <div class="row">
-        <div class="col-md-7">
-            <table class="table table-bordered">
-                <thead>
-                <tr>
-                    <th>Nama</th>
-                    <th>Plat</th>
-                    <th>Jenis</th>
-                    <th>Kapasitas</th>
-                    <th>Sopir</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach($kendaraan as $item)
+    <div class="row g-4">
+        <div class="col-12 col-lg-7">
+            <div class="table-responsive shadow-sm rounded-3 bg-white">
+                <table class="table table-bordered mb-0 align-middle">
+                    <thead>
                     <tr>
-                        <td>{{ $item->nama }}</td>
-                        <td>{{ $item->plat_nomor }}</td>
-                        <td>{{ $item->jenis }}</td>
-                        <td>{{ $item->kapasitas }}</td>
-                        <td>{{ $item->sopir->nama ?? '-' }}</td>
-                        <td>{{ $item->status }}</td>
-                        <td>
-                            <form method="POST" action="{{ route('kendaraan.destroy', $item) }}" onsubmit="return confirm('Hapus kendaraan?')">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-sm btn-danger">Hapus</button>
-                            </form>
-                        </td>
+                        <th>Nama</th>
+                        <th>Plat</th>
+                        <th>Jenis</th>
+                        <th>Kapasitas</th>
+                        <th>Sopir</th>
+                        <th>Status</th>
+                        <th class="text-nowrap">Aksi</th>
                     </tr>
-                @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    @foreach($kendaraan as $item)
+                        <tr>
+                            <td>{{ $item->nama }}</td>
+                            <td>{{ $item->plat_nomor }}</td>
+                            <td>{{ $item->jenis }}</td>
+                            <td>{{ $item->kapasitas }}</td>
+                            <td>{{ $item->sopir->nama ?? '-' }}</td>
+                            <td>{{ $item->status }}</td>
+                            <td>
+                                <form method="POST" action="{{ route('kendaraan.destroy', $item) }}" class="d-inline" onsubmit="return confirm('Hapus kendaraan?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-sm btn-danger">Hapus</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="col-md-5">
+        <div class="col-12 col-lg-5">
             <div class="card">
                 <div class="card-header">Tambah Kendaraan</div>
                 <div class="card-body">

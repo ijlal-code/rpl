@@ -15,21 +15,31 @@
             border-radius: 0.75rem;
         }
 
+        main {
+            padding: 1.5rem 0;
+        }
+
         .table-responsive {
             overflow-x: auto;
         }
 
-        @media (max-width: 767px) {
+        @media (max-width: 991.98px) {
+            main {
+                padding: 1rem 0.25rem;
+            }
+
+            .card-header {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 767.98px) {
             .navbar-brand {
                 font-size: 1rem;
             }
 
             .table td, .table th {
                 white-space: nowrap;
-            }
-
-            .card-header {
-                font-size: 0.95rem;
             }
         }
     </style>
