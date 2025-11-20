@@ -2,8 +2,8 @@
 
 @section('content')
 <div class="container py-4">
-    <h1 class="mb-1">Dashboard Sopir</h1>
-    <p class="text-muted mb-4">Kelola jadwal keberangkatan Mobil Majene dan konfirmasi pesanan penumpang.</p>
+    <h1 class="mb-1">Jadwal Sopir</h1>
+    <p class="text-muted mb-4">Buat jadwal keberangkatan baru dan pantau jadwal yang telah Anda atur.</p>
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
@@ -20,7 +20,5 @@
     @endif
 
     @include('sopir.partials.jadwal')
-
-    @include('sopir.partials.pesanan')
 </div>
 @endsection

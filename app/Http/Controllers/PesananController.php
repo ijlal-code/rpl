@@ -20,7 +20,7 @@ class PesananController extends Controller
     public function create()
     {
         return view('pesanan.index', [
-            'pesanan' => Pesanan::with(['penumpang', 'sopir', 'kendaraan', 'rute'])->get(),
+            'pesanan' => Pesanan::with(['penumpang', 'sopir', 'kendaraan', 'rute', 'jadwal'])->get(),
             'formMode' => 'create',
             'rute' => Rute::all(),
             'kendaraan' => Kendaraan::all(),
