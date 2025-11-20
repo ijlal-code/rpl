@@ -41,6 +41,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 Route::middleware(['auth', 'sopir'])->group(function () {
     Route::get('/sopir', [SopirController::class, 'dashboard'])->name('sopir.dashboard');
+    Route::get('/sopir/jadwal', [SopirController::class, 'jadwal'])->name('sopir.jadwal.index');
+    Route::get('/sopir/pesanan', [SopirController::class, 'pesanan'])->name('sopir.pesanan.index');
     Route::post('/sopir/pesanan/{pesanan}/konfirmasi', [SopirController::class, 'konfirmasi'])->name('sopir.pesanan.konfirmasi');
     Route::post('/sopir/pesanan/{pesanan}/selesai', [SopirController::class, 'selesaikan'])->name('sopir.pesanan.selesai');
     Route::post('/sopir/jadwal', [SopirController::class, 'simpanJadwal'])->name('sopir.jadwal.store');

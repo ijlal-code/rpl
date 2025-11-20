@@ -33,8 +33,15 @@
                                 <label class="form-label">Pilih jadwal</label>
                                 <select name="jadwal_id" class="form-select" required>
                                     @foreach($rekomendasi as $item)
-                                        <option value="{{ $item->id }}" @selected(old('jadwal_id') == $item->id)>
+                                        @php $sudahDipesan = $pesananPerJadwal->has($item->id); @endphp
+                                        <option value="{{ $item->id }}" @selected(old('jadwal_id') == $item->id) @disabled($sudahDipesan)>
                                             {{ $item->rute->nama_rute ?? '-' }} • {{ $item->tanggal_keberangkatan }} {{ $item->jam_keberangkatan }} • Sopir {{ $item->sopir->nama ?? $item->sopir->user->name ?? '-' }}
+                                            @if($item->catatan)
+                                                • Catatan sopir: {{ $item->catatan }}
+                                            @endif
+                                            @if($sudahDipesan)
+                                                • Sudah dipesan
+                                            @endif
                                         </option>
                                     @endforeach
                                 </select>
@@ -93,6 +100,7 @@
                         <th>Sopir</th>
                         <th>Rute</th>
                         <th>Waktu Berangkat</th>
+                        <th>Catatan Sopir</th>
                         <th>Status</th>
                         <th>Aksi</th>
                     </tr>
@@ -106,9 +114,12 @@
                             <td>{{ $item->sopir->nama ?? $item->sopir->user->name ?? '-' }}</td>
                             <td>{{ $item->rute->nama_rute ?? '-' }}</td>
                             <td>{{ $item->tanggal_keberangkatan }} {{ $item->jam_keberangkatan }}</td>
+                            <td>{{ $item->catatan ?? '-' }}</td>
                             <td><span class="badge text-bg-{{ $badge }} text-capitalize">{{ str_replace('_', ' ', $item->status) }}</span></td>
                             <td>
-                                @if($item->status === 'aktif')
+                                @if($pesananPerJadwal->has($item->id))
+                                    <span class="badge text-bg-success">Sudah dipesan</span>
+                                @elseif($item->status === 'aktif')
                                     <form method="POST" action="{{ route('penumpang.pesan') }}" class="d-flex gap-2">
                                         @csrf
                                         <input type="hidden" name="jadwal_id" value="{{ $item->id }}">
@@ -150,6 +161,8 @@
                         <th>Rute</th>
                         <th>Sopir</th>
                         <th>Jadwal</th>
+                        <th>Catatan Sopir</th>
+                        <th>Catatan Anda</th>
                         <th>Status</th>
                     </tr>
                     </thead>
@@ -159,6 +172,8 @@
                             <td>{{ $item->rute->nama_rute ?? '-' }}</td>
                             <td>{{ $item->jadwal->sopir->nama ?? $item->sopir->nama ?? '-' }}</td>
                             <td>{{ $item->tanggal_keberangkatan }} {{ $item->jam_keberangkatan }}</td>
+                            <td>{{ $item->jadwal->catatan ?? '-' }}</td>
+                            <td>{{ $item->catatan ?? '-' }}</td>
                             <td><span class="badge text-bg-{{ $statusBadgePesanan[$item->status] ?? 'secondary' }} text-capitalize">{{ str_replace('_', ' ', $item->status) }}</span></td>
                         </tr>
                     @empty

@@ -17,9 +17,14 @@ class UserController extends Controller
 
         $rekomendasi = $this->buildRekomendasi(auth()->id());
 
+        $pesananPerJadwal = Pesanan::where('user_id', auth()->id())
+            ->get()
+            ->keyBy('jadwal_id');
+
         return view('dashboard.penumpang', [
             'jadwal' => $jadwal,
             'rekomendasi' => $rekomendasi,
+            'pesananPerJadwal' => $pesananPerJadwal,
             'pesanan' => Pesanan::with(['rute', 'jadwal.sopir.user'])
                 ->where('user_id', auth()->id())
                 ->latest()
@@ -38,6 +43,14 @@ class UserController extends Controller
 
         if ($jadwal->status !== 'aktif') {
             return back()->withErrors(['jadwal_id' => 'Jadwal ini tidak tersedia untuk dipesan.']);
+        }
+
+        $sudahDipesan = Pesanan::where('user_id', auth()->id())
+            ->where('jadwal_id', $jadwal->id)
+            ->exists();
+
+        if ($sudahDipesan) {
+            return back()->withErrors(['jadwal_id' => 'Anda sudah memesan jadwal ini.']);
         }
 
         Pesanan::create([

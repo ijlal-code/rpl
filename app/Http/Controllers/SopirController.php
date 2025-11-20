@@ -11,26 +11,28 @@ class SopirController extends Controller
 {
     public function dashboard()
     {
-        $sopirId = auth()->user()->sopir->id ?? null;
+        $sopirId = $this->getSopirId();
 
-        $pesanan = Pesanan::with(['penumpang', 'rute', 'kendaraan', 'jadwal'])
-            ->where('sopir_id', $sopirId)
-            ->latest()
-            ->get();
+        return view('dashboard.sopir', $this->dataSopir($sopirId));
+    }
 
-        return view('dashboard.sopir', [
-            'pesanan' => $pesanan,
-            'jadwal' => JadwalSopir::with('rute')
-                ->where('sopir_id', $sopirId)
-                ->orderByDesc('tanggal_keberangkatan')
-                ->orderByDesc('jam_keberangkatan')
-                ->get(),
-        ]);
+    public function jadwal()
+    {
+        $sopirId = $this->getSopirId();
+
+        return view('sopir.jadwal.index', $this->dataSopir($sopirId));
+    }
+
+    public function pesanan()
+    {
+        $sopirId = $this->getSopirId();
+
+        return view('sopir.pesanan.index', $this->dataSopir($sopirId));
     }
 
     public function konfirmasi(Pesanan $pesanan)
     {
-        $sopirId = auth()->user()->sopir->id ?? null;
+        $sopirId = $this->getSopirId();
 
         if ($pesanan->sopir_id && $pesanan->sopir_id !== $sopirId) {
             abort(403);
@@ -43,7 +45,7 @@ class SopirController extends Controller
 
     public function selesaikan(Pesanan $pesanan)
     {
-        $sopirId = auth()->user()->sopir->id ?? null;
+        $sopirId = $this->getSopirId();
 
         if ($pesanan->sopir_id !== $sopirId) {
             abort(403);
@@ -56,7 +58,7 @@ class SopirController extends Controller
 
     public function editJadwal(JadwalSopir $jadwal)
     {
-        $sopirId = auth()->user()->sopir->id ?? null;
+        $sopirId = $this->getSopirId();
 
         if ($jadwal->sopir_id !== $sopirId) {
             abort(403);
@@ -78,7 +80,7 @@ class SopirController extends Controller
             'catatan' => 'nullable|string',
         ]);
 
-        $sopirId = auth()->user()->sopir->id ?? null;
+        $sopirId = $this->getSopirId();
 
         if (!$sopirId) {
             return back()->withErrors(['jadwal' => 'Sopir tidak ditemukan.']);
@@ -109,7 +111,7 @@ class SopirController extends Controller
             'catatan' => 'nullable|string',
         ]);
 
-        $sopirId = auth()->user()->sopir->id ?? null;
+        $sopirId = $this->getSopirId();
 
         if ($jadwal->sopir_id !== $sopirId) {
             abort(403);
@@ -132,12 +134,12 @@ class SopirController extends Controller
         $jadwal->catatan = $data['catatan'] ?? null;
         $jadwal->save();
 
-        return redirect()->to(route('sopir.dashboard') . '#jadwal-saya')->with('success', 'Jadwal diperbarui.');
+        return redirect()->route('sopir.jadwal.index')->with('success', 'Jadwal diperbarui.');
     }
 
     public function hapusJadwal(JadwalSopir $jadwal)
     {
-        $sopirId = auth()->user()->sopir->id ?? null;
+        $sopirId = $this->getSopirId();
 
         if ($jadwal->sopir_id !== $sopirId) {
             abort(403);
@@ -180,5 +182,35 @@ class SopirController extends Controller
                 'tujuan' => $tujuan ?: ($asal ?: $input),
             ]
         );
+    }
+
+    private function dataSopir(?int $sopirId): array
+    {
+        return [
+            'pesanan' => $this->pesananUntukSopir($sopirId),
+            'jadwal' => $this->jadwalUntukSopir($sopirId),
+        ];
+    }
+
+    private function pesananUntukSopir(?int $sopirId)
+    {
+        return Pesanan::with(['penumpang', 'rute', 'kendaraan', 'jadwal'])
+            ->where('sopir_id', $sopirId)
+            ->latest()
+            ->get();
+    }
+
+    private function jadwalUntukSopir(?int $sopirId)
+    {
+        return JadwalSopir::with('rute')
+            ->where('sopir_id', $sopirId)
+            ->orderByDesc('tanggal_keberangkatan')
+            ->orderByDesc('jam_keberangkatan')
+            ->get();
+    }
+
+    private function getSopirId(): ?int
+    {
+        return auth()->user()->sopir->id ?? null;
     }
 }

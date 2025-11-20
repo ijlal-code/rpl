@@ -26,6 +26,8 @@
             <th>Sopir</th>
             <th>Rute</th>
             <th>Jadwal</th>
+            <th>Catatan Sopir</th>
+            <th>Catatan Penumpang</th>
             <th>Status</th>
             <th>Alasan Pembatalan</th>
             <th>Aksi</th>
@@ -38,6 +40,8 @@
                 <td>{{ $item->sopir->nama ?? $item->jadwal->sopir->nama ?? '-' }}</td>
                 <td>{{ $item->rute->nama_rute ?? '-' }}</td>
                 <td>{{ $item->tanggal_keberangkatan }} {{ $item->jam_keberangkatan }}</td>
+                <td>{{ $item->jadwal->catatan ?? '-' }}</td>
+                <td>{{ $item->catatan ?? '-' }}</td>
                 <td>{{ ucfirst($item->status) }}</td>
                 <td>{{ $item->alasan_pembatalan ?? '-' }}</td>
                 <td>
