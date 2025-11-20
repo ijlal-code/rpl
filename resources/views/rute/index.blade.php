@@ -2,41 +2,43 @@
 
 @section('content')
 <div class="container py-4">
-    <div class="row">
-        <div class="col-md-7">
-            <h1>Rute</h1>
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>Nama</th>
-                    <th>Asal</th>
-                    <th>Tujuan</th>
-                    <th>Jarak</th>
-                    <th>Estimasi</th>
-                    <th>Aksi</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach($rute as $item)
+    <div class="row g-4">
+        <div class="col-12 col-lg-7">
+            <h1 class="h3 mb-3">Rute</h1>
+            <div class="table-responsive shadow-sm rounded-3 bg-white">
+                <table class="table table-striped mb-0 align-middle">
+                    <thead>
                     <tr>
-                        <td>{{ $item->nama_rute }}</td>
-                        <td>{{ $item->asal }}</td>
-                        <td>{{ $item->tujuan }}</td>
-                        <td>{{ $item->jarak_km }} km</td>
-                        <td>{{ $item->perkiraan_waktu }}</td>
-                        <td>
-                            <form method="POST" action="{{ route('rute.destroy', $item) }}" onsubmit="return confirm('Hapus rute?')">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-sm btn-danger">Hapus</button>
-                            </form>
-                        </td>
+                        <th>Nama</th>
+                        <th>Asal</th>
+                        <th>Tujuan</th>
+                        <th>Jarak</th>
+                        <th>Estimasi</th>
+                        <th class="text-nowrap">Aksi</th>
                     </tr>
-                @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    @foreach($rute as $item)
+                        <tr>
+                            <td>{{ $item->nama_rute }}</td>
+                            <td>{{ $item->asal }}</td>
+                            <td>{{ $item->tujuan }}</td>
+                            <td>{{ $item->jarak_km }} km</td>
+                            <td>{{ $item->perkiraan_waktu }}</td>
+                            <td>
+                                <form method="POST" action="{{ route('rute.destroy', $item) }}" class="d-inline" onsubmit="return confirm('Hapus rute?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-sm btn-danger">Hapus</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="col-md-5">
+        <div class="col-12 col-lg-5">
             <div class="card">
                 <div class="card-header">Tambah Rute</div>
                 <div class="card-body">

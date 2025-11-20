@@ -17,78 +17,84 @@
     </div>
 
     <h5>Pesanan Terbaru</h5>
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>Penumpang</th>
-            <th>Rute</th>
-            <th>Jadwal</th>
-            <th>Status</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach($pesananTerbaru as $item)
-            <tr>
-                <td>{{ $item->penumpang->name ?? '-' }}</td>
-                <td>{{ $item->rute->nama_rute ?? '-' }}</td>
-                <td>{{ $item->tanggal_keberangkatan }} {{ $item->jam_keberangkatan }}</td>
-                <td><span class="badge text-bg-secondary">{{ $item->status }}</span></td>
-            </tr>
-        @endforeach
-        </tbody>
-    </table>
-
-    @isset($jadwalTerbaru)
-        <h5 class="mt-4">Monitoring Jadwal Sopir</h5>
-        <table class="table table-bordered">
+    <div class="table-responsive shadow-sm rounded-3 bg-white mb-4">
+        <table class="table table-striped mb-0 align-middle">
             <thead>
             <tr>
-                <th>Sopir</th>
+                <th>Penumpang</th>
                 <th>Rute</th>
                 <th>Jadwal</th>
                 <th>Status</th>
             </tr>
             </thead>
             <tbody>
-            @foreach($jadwalTerbaru as $item)
+            @foreach($pesananTerbaru as $item)
                 <tr>
-                    <td>{{ $item->sopir->nama ?? $item->sopir->user->name ?? '-' }}</td>
+                    <td>{{ $item->penumpang->name ?? '-' }}</td>
                     <td>{{ $item->rute->nama_rute ?? '-' }}</td>
                     <td>{{ $item->tanggal_keberangkatan }} {{ $item->jam_keberangkatan }}</td>
-                    <td><span class="badge text-bg-secondary text-capitalize">{{ str_replace('_', ' ', $item->status) }}</span></td>
+                    <td><span class="badge text-bg-secondary">{{ $item->status }}</span></td>
                 </tr>
             @endforeach
             </tbody>
         </table>
+    </div>
+
+    @isset($jadwalTerbaru)
+        <h5 class="mt-4">Monitoring Jadwal Sopir</h5>
+        <div class="table-responsive shadow-sm rounded-3 bg-white mb-4">
+            <table class="table table-bordered mb-0 align-middle">
+                <thead>
+                <tr>
+                    <th>Sopir</th>
+                    <th>Rute</th>
+                    <th>Jadwal</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach($jadwalTerbaru as $item)
+                    <tr>
+                        <td>{{ $item->sopir->nama ?? $item->sopir->user->name ?? '-' }}</td>
+                        <td>{{ $item->rute->nama_rute ?? '-' }}</td>
+                        <td>{{ $item->tanggal_keberangkatan }} {{ $item->jam_keberangkatan }}</td>
+                        <td><span class="badge text-bg-secondary text-capitalize">{{ str_replace('_', ' ', $item->status) }}</span></td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
     @endisset
 
     @isset($laporan)
         <div class="mt-4">
             <h5>Laporan Lengkap</h5>
-            <table class="table table-bordered">
-                <thead>
-                <tr>
-                    <th>Penumpang</th>
-                    <th>Sopir</th>
-                    <th>Kendaraan</th>
-                    <th>Rute</th>
-                    <th>Waktu</th>
-                    <th>Status</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach($laporan as $item)
+            <div class="table-responsive shadow-sm rounded-3 bg-white">
+                <table class="table table-bordered mb-0 align-middle">
+                    <thead>
                     <tr>
-                        <td>{{ $item->penumpang->name ?? '-' }}</td>
-                        <td>{{ $item->sopir->nama ?? '-' }}</td>
-                        <td>{{ $item->kendaraan->nama ?? '-' }}</td>
-                        <td>{{ $item->rute->nama_rute ?? '-' }}</td>
-                        <td>{{ $item->tanggal_keberangkatan }} {{ $item->jam_keberangkatan }}</td>
-                        <td>{{ $item->status }}</td>
+                        <th>Penumpang</th>
+                        <th>Sopir</th>
+                        <th>Kendaraan</th>
+                        <th>Rute</th>
+                        <th>Waktu</th>
+                        <th>Status</th>
                     </tr>
-                @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    @foreach($laporan as $item)
+                        <tr>
+                            <td>{{ $item->penumpang->name ?? '-' }}</td>
+                            <td>{{ $item->sopir->nama ?? '-' }}</td>
+                            <td>{{ $item->kendaraan->nama ?? '-' }}</td>
+                            <td>{{ $item->rute->nama_rute ?? '-' }}</td>
+                            <td>{{ $item->tanggal_keberangkatan }} {{ $item->jam_keberangkatan }}</td>
+                            <td>{{ $item->status }}</td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <div class="mt-3">

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container py-4">
     <h3 class="mb-4">Edit Profil</h3>
 
     <form action="{{ route('profil.update') }}" method="POST">
